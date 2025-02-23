@@ -13,15 +13,12 @@ public class Poliza {
 
     @Override
     public String toString() {
-        return "Poliza{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", valorAuto=" + valorAuto +
-                ", accidentes=" + accidentes +
-                ", modelo='" + modelo + '\'' +
-                ", edad='" + edad + '\'' +
-                ", costoPoliza=" + costoPoliza +
-                '}';
+        return id + ". " + "Póliza de " + nombre +
+                ", valorAuto: " + valorAuto +
+                ", accidentes: " + accidentes +
+                ", modelo: " + modelo +
+                ", edad: " + edad +
+                ", costoPoliza: " + costoPoliza;
     }
 
     public Poliza(Long id, String nombre, double valorAuto, int accidentes, String modelo, String edad, double costoPoliza) {

@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import com.example.prypoliza1.model.Poliza;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "poliza.db";
     private static final int DATABASE_VERSION = 1;
@@ -30,16 +32,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUM_EDAD + " TEXT NOT NULL, " +
                     COLUM_COSTO + " REAL NOT NULL)";
 
-
-
-    private static final String TABLE_NAME_MODELOS = "modelos";
-
-
-    private static final String TABLE_MODELO_CREATE =
-            "CREATE TABLE " + TABLE_NAME_MODELOS + "(" +
-                    COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    COLUMN_NOMBRE + " TEXT NOT NULL, ";
-
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -47,7 +39,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(TABLE_CREATE);
-        db.execSQL(TABLE_MODELO_CREATE);
     }
 
     @Override
@@ -74,20 +65,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return resultado != -1;
     }
 
-    public boolean insertarModelo(String nombre) {
-        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_NOMBRE, nombre);
-        long resultado = sqLiteDatabase.insert(TABLE_NAME_MODELOS, null, values);
-        sqLiteDatabase.close();
-        return resultado != -1;
-    }
-
     public Cursor obtenerPolizas() {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
 
         return sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_NAME, null);
     }
+
+    public boolean updatePoliza(Poliza poliza) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_NOMBRE, poliza.getNombre());
+        values.put(COLUMN_VALOR, poliza.getValorAuto());
+        values.put(COLUM_MODELO, poliza.getModelo());
+        values.put(COLUM_ACCIDENTE, poliza.getAccidentes());
+        values.put(COLUM_EDAD, poliza.getEdad());
+        values.put(COLUM_COSTO, poliza.getCostoPoliza());
+
+        int resultado = sqLiteDatabase.update(TABLE_NAME, values, COLUM_ID + " = ?", new String[]{String.valueOf(poliza.getId())});
+        sqLiteDatabase.close();
+
+        return resultado > 0; // Retorna true si al menos una fila fue actualizada
+    }
+
+    public Poliza getPolizaById(int id) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Poliza poliza = null;
+
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + COLUM_ID + " = ?", new String[]{String.valueOf(id)});
+
+        if (cursor.moveToFirst()) {
+            poliza = new Poliza(
+                    cursor.getLong(0),
+                    cursor.getString(1),
+                    cursor.getDouble(2),
+                    cursor.getInt(3),
+                    cursor.getString(4),
+                    cursor.getString(5),
+                    cursor.getDouble(6));
+        }
+        cursor.close();
+        return poliza;
+    }
+
 }
 
 

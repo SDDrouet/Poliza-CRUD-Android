@@ -1,6 +1,7 @@
 package com.example.prypoliza1.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,12 +42,26 @@ public class PolizaAdapter extends ArrayAdapter<Poliza> {
 
         TextView tvPoliza = convertView.findViewById(R.id.tvPoliza);
         Button btnEliminar = convertView.findViewById(R.id.btnEliminar);
+        Button btnActualizar = convertView.findViewById(R.id.btnActualizar);
 
         Poliza poliza = polizas.get(position);
         tvPoliza.setText(poliza.toString());
 
         btnEliminar.setOnClickListener(v -> {
             eliminarPoliza(poliza.getId(), position);
+        });
+
+        btnActualizar.setOnClickListener(v -> {
+            // Crear intent para enviar a la actividad de actualización
+            Intent intent = new Intent(context, ActualizarPolizaActivity.class);
+            intent.putExtra("id", poliza.getId());
+            intent.putExtra("nombre", poliza.getNombre());
+            intent.putExtra("valorAuto", poliza.getValorAuto());
+            intent.putExtra("accidentes", poliza.getAccidentes());
+            intent.putExtra("modelo", poliza.getModelo());
+            intent.putExtra("edad", poliza.getEdad());
+            intent.putExtra("costoPoliza", poliza.getCostoPoliza());
+            context.startActivity(intent);
         });
 
         return convertView;
